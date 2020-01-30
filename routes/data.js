@@ -8,23 +8,10 @@ const dataRoutes = (app, fs) => {
 
     //helper for post requests
     const appendTask = (fileData, callback, encoding = 'utf8') => {
+ 
+       
 
-        readFile(path.join(__dirname,'../data.json'),  'utf8', (err, data) => {
-            if (err) {
-                throw err;
-            }
-    
-            var taskArray = JSON.parse(data);
-            taskArray.push(fileData);
-
-            writeFile(path.join(__dirname,'../data.json'), JSON.stringify(taskArray), encoding, (err) => {
-            if (err) {
-                throw err;
-            }
-            console.log("added data");
-           
-        });
-    });
+    return;
 }
     
 
@@ -47,12 +34,24 @@ app.post('/add', (req, res) => {
         toAdd["name"] = newTask;
         toAdd["completed"] = false;
 
-        appendTask(toAdd, () => {
-            res.status(200).send('new task added');
-            res.redirect(req.get('referer'));
+        readFile(path.join(__dirname,'../data.json'),  'utf8', (err, data) => {
+            if (err) {
+                throw err;
+            }
+    
+            var taskArray = JSON.parse(data);
+            taskArray.push(toAdd);
+
+            writeFile(path.join(__dirname,'../data.json'), JSON.stringify(taskArray), 'utf8', (err) => {
+            if (err) {
+                throw err;
+            }
+            console.log("added data");
+            return res.redirect("back");
         });
     });
-};
+});
+}
 
 
 
