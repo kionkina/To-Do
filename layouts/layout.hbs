@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script>
+		
+//making asyncronous request to API
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+
+function handleResponse(response){
+	response = JSON.parse(response);
+	const container = document.getElementById("task_container");
+	response.forEach((item, index) => {
+		const task = document.createElement('div');
+		task.setAttribute('id', index);
+		task.addEventListener("click", toggle_complete);
+			task.innerText = item.name;
+			//task has no been completed, so don't strike through
+		if (item.completed === false){
+		container.append(task);
+		}
+		else{
+			const strike = document.createElement('strike');
+			strike.append(task);
+			container.append(strike);
+		}	
+	});
+};
+
+//on click, change the state of the to-do item
+function toggle_complete(e){
+	var id = e.target.id;
+
+
+}
+	
+
+httpGetAsync("/data", handleResponse);
+	</script>
+
+
+</head>
+
+<body>
+<center>
+<b>TASKS</b>
+<br><br>
+<div id="task_container">
+
+</div>
+
+Add task:
+<br>
+<br>
+<form id="add" action="/add" method="POST">
+<input id="new_task" name="new_task">   </input>
+<br>
+<button type="submit"> Submit </button>
+</form>
+
+
+</center>
+</body>
+
+</html>
