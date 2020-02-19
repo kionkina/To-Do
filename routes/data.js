@@ -2,7 +2,7 @@ const fs = require("fs");
 const readFile = fs.readFile;
 const writeFile = fs.writeFile;
 var path = require('path');
-
+const axios = require('axios');
 //first API server route
 const dataRoutes = (app, fs) => {
 
@@ -97,7 +97,6 @@ app.post('/delete_task', (req, res) => {
 });
 
 
-
 app.post('/add', (req, res) => {
         var newTask = req.body.new_task.toString();
         console.log(newTask);
@@ -110,8 +109,78 @@ app.post('/add', (req, res) => {
             res.redirect('/test');
         });
     });
+
+
+
+app.get("/auth", async (req, res) => {
+    axios.get('https://hunter-todo-api.herokuapp.com/user')
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+app.post('/addUser', (req, res) => {
+    var username = req.body.username;
+    var info = {
+        'username': username,
+        headers: { 'Content-Type': 'application/json'}
+
+    }
+    axios
+        .post('https://hunter-todo-api.herokuapp.com/user', info)
+        .then(response => {
+            console.log(`statusCode: ${response.statusCode}`)
+            console.log(response);
+            res.redirect("/login?msg=successfully+added+user"); 
+        })
+        .catch(error => {
+             console.error(error); 
+             res.redirect("/login?msg=please+try+again");  
+        })  
+    });
+
+
+    const getUserData = (username) => {
+        console.log("running getUserData...");
+        var info = {
+            'username': username,
+            headers: { 'Content-Type': 'application/json'}
+    
+        }
+             axios
+            .get('https://hunter-todo-api.herokuapp.com/user?username='+username)
+            .then(res => {
+                //console.log("Response.data:");
+                //return res.data;
+                //console.log("RES");
+                //console.log(res);
+                
+                //console.log(`statusCode: ${response.statusCode}`)
+                //console.log(response);
+                //console.log(response.data[0]);
+                
+            })
+            .catch(error => {
+                //console.log("ERROR");
+                 //console.error(error); 
+                //return "error"
+            });
+            console.log("DONE");
+    } 
+    
+
+
+    app.get('/auth', (req, res) => {
+        var username = req.body.username;
+        console.log("about to run response");
+        //var response = getUserData(username);
+        console.log("RESPONSE IS: ");
+       // console.log(response);
+        });
+    
+
 };
-
-
-
 module.exports = dataRoutes;
