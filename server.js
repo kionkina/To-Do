@@ -3,10 +3,11 @@ var app = express();
 var path = require('path');
 var hbs = require('express-handlebars');
 var bodyParser = require('body-parser');
-const axios = require('axios');
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-
+const cookieParser = require('cookie-parser');
+app.use(cookieParser('MY SECRET')); 
 // parse application/json
 app.use(bodyParser.json());
 
