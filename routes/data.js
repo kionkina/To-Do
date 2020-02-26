@@ -4,15 +4,6 @@ const writeFile = fs.writeFile;
 var path = require('path');
 const axios = require('axios');
 const session = require('express-session');
-const fetch = require("node-fetch");
-var jwt = require("jsonwebtoken");
-var request = require('request');
-
-//axios.defaults.withCredentials = true;
-//const tough = require('tough-cookie');
-//const axiosCookieJarSupport = require('axios-cookiejar-support').default;
-//const https = require('https');
-//axiosCookieJarSupport(axios);
 
 //const cookieJar = new tough.CookieJar();
 const cookieConfig = {
@@ -131,13 +122,45 @@ app.post('/add', (req, res) => {
     });
 
 
+app.post('/addTask', (req, res) => {
+
+    console.log(req.body.new_task);
+    var token = req.cookies.userCookie.token;
+    var task = req.body.new_task;
+   
+    console.log("content:");
+    console.log(task);
+    var info = {headers: {"Authorization":`${token}`}
+};
+    var data = {content:task};
+    console.log("BOUTTA ADD TASK");
+    axios
+    .post('https://hunter-todo-api.herokuapp.com/todo-item', data, info)
+    .then(response => {
+        console.log(response);
+        res.redirect("/home"); 
+    })
+    .catch(error => {
+         console.error(error); 
+         res.redirect("/home");  
+    })
+    
+
+});
+
+
+
 app.post('/addUser', (req, res) => {
     var username = req.body.username;
-    var token = jwt.sign({ username: username }, 'secret key');
-    var cookie = {'Authorization': token};
+    var password = req.body.password;
+    
+    
     var info = {
         'username': username,
-        headers: { 'Content-Type': 'application/json', 'Cookie': cookie}};
+        headers: { 
+            'Content-Type': 'application/json',
+        }
+    }
 
 
     
@@ -147,8 +170,11 @@ app.post('/addUser', (req, res) => {
         .then(response => {
             console.log(`statusCode: ${response.statusCode}`)
             console.log(response);
-            console.log("COOKIES:")
-            console.log(response.cookies);
+            console.log(response.headers);
+            
+            console.log(req.cookies);
+            console.log(res.cookies);
+           
             res.redirect("/login?msg=successfully+added+user"); 
         })
         .catch(error => {
@@ -160,45 +186,19 @@ app.post('/addUser', (req, res) => {
     });
 
 
-    const getTasks = () => {
- 
-        console.log("making call");
-        
 
-        axios
-        .get("https://hunter-todo-api.herokuapp.com/todo-item",{ withCredentials: true } )
-            .then(response => {
-                if (response.ok) {
-                console.log("here");
-                return response.json()
-                }
-                else {
-                    console.log(response);
-                }
-            })
-            .catch(error => {
-                console.log("ERROR");
-                console.error(error);
+    app.get('/logout', (req,res) => {
+        console.log(req.cookies.userCookie);
+        if (req.cookies.userCookie){
+            console.log("CLEARING");
+            res.clearCookie("userCookie");
+        }
+
+        res.redirect('/login');
 
 
-            })
-
-        fetch("https://hunter-todo-api.herokuapp.com/todo-item",{ credentials: "include" } )
-            .then(response => {
-                if (response.ok) {
-                console.log("here");
-                return response.json()
-                }
-                else {
-                    console.log(response);
-                }
-            })
-            //.catch(error => {
-              //  console.log("ERROR");
-                //console.error(error);
-  //          })
-    }
-
+    });
+    
 
 
 
@@ -206,34 +206,20 @@ app.post('/addUser', (req, res) => {
         var username = req.body.username;
         console.log("running getUserData...");
         
-        var url = 'https://hunter-todo-api.herokuapp.com/user?username='+username;
+        var url = 'https://hunter-todo-api.herokuapp.com/auth';
              axios
-            .get(url)
+            .post(url, {username:username})
             .then(result => {
-                console.log(result.headers);
-                console.log(result.data);
-                var id = result.data[0].id; 
-                console.log("id is" + id);  
-                console.log("RES.COOKIES:")
-                console.log(result.cookie);            
-            
-           
-                var token = Buffer.from(`${username}`, 'utf8').toString('base64')
-                //res.redirect("/home");
-                  console.log(" MOVING ON TO AXIOS CALL ");
-                    axios.get("https://hunter-todo-api.herokuapp.com/todo-item", {headers: {
-                
-                'Authorization': `${token}`,
-                'Content-Type' : 'application/x-www-form-urlencoded',
-            }
-                })
-                .then(response => {
-                   console.log(response);
-                })
-                  .catch(error => {
-                   console.log("ERROR");
-                console.error(error);
-                   })
+                console.log(result.data.token);
+                var token = result.data.token;
+               
+                // no: set a new cookie
+            var randomNumber=Math.random().toString();
+            randomNumber=randomNumber.substring(2,randomNumber.length);
+            res.cookie('userCookie', {token:token, name:username});
+            console.log('cookie created successfully');
+
+                res.redirect("/home");
             })
             .catch(error => {
                 console.log("here");
@@ -244,24 +230,36 @@ app.post('/addUser', (req, res) => {
     
 
     app.get('/home', function(req, res){
-        console.log("res.signedCookies.cookie1 is:");
-        console.log(req.signedCookies.cookie1);
-        axios.get("https://hunter-todo-api.herokuapp.com/todo-item",{  headers: {
-            'Authorization': Buffer.from('username:c').toString('base64'), 
-        }})
+        if (!req.cookies.userCookie){
+            res.redirect("/login?msg=Please+log+in+or+sign+up"); 
+        }
+        else {
+        console.log("WE ARE NOW AT HOME!");
+        console.log(req.cookies);
+        var username = req.cookies.userCookie.name;
+        console.log("USERNAME1:");
+        var token = req.cookies.userCookie.token;
+        console.log(username);
+        var info = {headers: {'Authorization':`${token}`}};
+        console.log("about to make request");
+        axios.get("https://hunter-todo-api.herokuapp.com/todo-item", info)
         .then(response => {
            console.log(response);
+           var list = response.data;
+           res.render("home", {layout: "userTasks",  list:list, username:username});
         })
           .catch(error => {
            console.log("ERROR");
         console.error(error);
-           })
-        //msg = "Welcome, " + req.session.user.username + ". Your ID is " + req.session.user.id;
-        //username = req.session.user.username;
-     
-        var msg = "Welcome, "  + ".";
-        res.render("home", {layout: "default",  message:msg});
-    });
+        var list = error.data;
+        console.log("USERNAME");
+        console.log(username);
+        res.render("home", {layout: "userTasks",  list:list, username:username});
     
-};
+        }) //end else
+    };
+    
+}); 
+
+}
 module.exports = dataRoutes;

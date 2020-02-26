@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<style>
+.remove{
+	background-color: rgb(236, 170, 170);
+	font-size: 7px;
+	cursor: grab;
+	height: "10px";
+}
+
+.task{
+
+	display: inline;
+
+
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+<center>
+
+<br><br>
+Welcome {{username}}, your list looks like this: <br><br>
+<div id="task_container">
+{{#each list}}
+
+{{this.content}} <br>
+
+{{/each}}
+</div>
+
+
+<br>
+<form id="add" action="/addTask" method="POST">
+<input id="new_task" name="new_task">   </input>
+<button type="submit"> Add Task </button>
+</form>
+<Button onClick="window.location='/logout'"> Log Out </Button>
+
+</center>
+</body>
+
+</html>

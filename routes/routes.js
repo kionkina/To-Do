@@ -13,11 +13,17 @@ app.get('/', function(req, res){
 
 
 
+
+
+
 app.get('/test', function(req, res){
     res.render("home", {layout: 'tasks', title: "title", data:"boop"});
 });
 
 app.get('/login', function(req, res){
+    if (req.cookies.userCookie){
+        return res.redirect("/home");
+    }
  console.log(req.query);
  console.log(req.query !== {});
     if (Object.keys(req.query).length === 0){
