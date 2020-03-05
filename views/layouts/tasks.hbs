@@ -22,16 +22,18 @@
 
 	<script>
 		
-//making asyncronous request to API
+//making asyncronous request to local API
 function httpGetAsync(theUrl, callback)
 {
+	console.log("calling async");
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
+		console.log(xmlHttp);
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-    xmlHttp.send(null);
+    xmlHttp.open("GET", theUrl, true); // true for async
+   xmlHttp.send();
 }
 
 //making asyncronous request to API
@@ -48,11 +50,14 @@ function httpPostAsync(theUrl, id, callback)
 }
 
 function loadTasks(){
+	console.log("here");
 	httpGetAsync("/data", handleResponse);
 }
 
 function handleResponse(response){
+	console.log("handling response");
 	response = JSON.parse(response);
+	console.log(response);
 	const taskContainer = document.getElementById("task_container");
 	taskContainer.innerHTML = "";
 	response.forEach((item, index) => {
@@ -105,7 +110,7 @@ function deleteTask(e){
 
 
 }
-
+console.log("bout to loadTasks");
 loadTasks();
 
 	</script>
@@ -114,6 +119,9 @@ loadTasks();
 </head>
 
 <body>
+
+
+
 <center>
 <b>TASKS</b>
 <br><br>
@@ -128,7 +136,22 @@ loadTasks();
 <button type="submit"> Add Task </button>
 </form>
 
+<br><br>
 
+<p style="font-size: 12px; ">
+<b>Click on a task to mark it as complete or incomplete. </b> <br><br>
+
+<br>
+When a user lands on this page, an ajax call is made to /data to retrieve data.json data. <br>
+On occasion, Chrome's same-origin policy will prevent the to-do items from showing up (you can refresh the page in that case).
+<br><Br>
+Add task submits data to /add through a form and redirects the page back to /part1c-d. <br>
+Removing and toggle use ajax calls instead.
+
+</p>
+
+
+<a href="/" > Back </a>
 </center>
 </body>
 

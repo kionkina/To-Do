@@ -6,26 +6,25 @@ const dataRoutes = require('./data');
 const appRouter = (app, fs) => {
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
-//view at localhost:8080
-app.get('/', function(req, res){
+
+
+app.get('/', (req, res) => {
+	res.render("home", {layout: 'landingPage'});
+	});
+
+app.get('/part1b', function(req, res){
 	res.sendFile(path.join(__dirname + '/../index.html'));
 });
 
-
-
-
-
-
-app.get('/test', function(req, res){
-    res.render("home", {layout: 'tasks', title: "title", data:"boop"});
+app.get('/part1c-d', function(req, res){
+    res.render("home", {layout: 'tasks'});
 });
 
 app.get('/login', function(req, res){
     if (req.cookies.userCookie){
         return res.redirect("/home");
     }
- console.log(req.query);
- console.log(req.query !== {});
+
     if (Object.keys(req.query).length === 0){
         msg = "";
     }
