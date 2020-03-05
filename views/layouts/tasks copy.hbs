@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<style>
+.remove{
+	background-color: rgb(236, 170, 170);
+	font-size: 7px;
+	cursor: grab;
+	height: "10px";
+}
+
+.task{
+
+	display: inline;
+
+
+}
+
+
+</style>
+
+	<script>
+		
+//making asyncronous request to API
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+
+//making asyncronous request to API
+function httpPostAsync(theUrl, id, callback) 
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+	}
+    xmlHttp.open("POST", theUrl, true); // true for asynchronous 
+	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlHttp.send("id=" + id);
+}
+
+function loadTasks(){
+	httpGetAsync("/data", handleResponse);
+}
+
+function handleResponse(response){
+	response = JSON.parse(response);
+	const taskContainer = document.getElementById("task_container");
+	taskContainer.innerHTML = "";
+	response.forEach((item, index) => {
+		const container = document.createElement('div');
+		const task = document.createElement('div');
+		task.setAttribute('class','task');
+		task.setAttribute('id', index);
+		//clicking Task will toggle its complete state
+		task.addEventListener("click", toggleComplete);
+			task.innerText = item.name;
+		
+		//creating button to remove task
+		const remove = document.createElement('button');
+		remove.innerHTML = "X";
+		remove.setAttribute("class", "remove");
+		remove.setAttribute('id', index)
+		remove.addEventListener("click", deleteTask);
+
+		const br = document.createElement("br");
+			//task has no been completed, so don't strike through
+		if (item.completed === false){
+		taskContainer.append(task);
+		taskContainer.append(remove);
+		taskContainer.append(br)
+		}
+		else{
+			const strike = document.createElement('strike');
+			strike.append(task);
+			taskContainer.append(strike);
+			taskContainer.append(remove);
+			taskContainer.append(br);
+		}
+
+
+	});
+};
+
+
+//on click, change the state of the to-do item
+function toggleComplete(e){
+	var id = e.target.id;
+	httpPostAsync("/toggle_complete", id, loadTasks);
+}
+
+
+function deleteTask(e){
+	var id = e.target.id;
+	console.log(id);
+	httpPostAsync("/delete_task", id, loadTasks);
+
+
+}
+
+loadTasks();
+
+	</script>
+
+
+</head>
+
+<body>
+<center>
+<b>TASKS</b>
+<br><br>
+<div id="task_container">
+
+</div>
+
+
+<br>
+<form id="add" action="/add" method="POST">
+<input id="new_task" name="new_task">   </input>
+<button type="submit"> Add Task </button>
+</form>
+
+
+</center>
+</body>
+
+</html>

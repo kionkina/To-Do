@@ -258,7 +258,71 @@ app.post('/addUser', (req, res) => {
     
         }) //end else
     };
+
+    app.post('/delete_user_task', function(req, res){
+        console.log("DELETE POST");
+        console.log(req);
+        var id = req.body.id;
+        var token = req.cookies.userCookie.token;
+        var info = {headers: {'Authorization':`${token}`}};
+        console.log("about to make request");
+        axios.delete("https://hunter-todo-api.herokuapp.com/todo-item/" + id, info)
+        .then(response => {
+           console.log(response);
+           var list = response.data;
+           res.redirect('/home');
+        })
+          .catch(error => {
+           console.log("ERROR");
+        console.error(error);
+        var list = error.data;
+        console.log("USERNAME");
+       res.redirect('/home');
     
+        }) //end else
+
+
+
+    });
+
+
+    app.post('/toggle_task_complete', function(req, res){
+        console.log("TOGGLE TASK COMPLETE");
+        console.log("INCOMING INFO");
+        console.log(req.body);
+        
+        var id = req.body.id;
+        var bool = req.body.completed;
+        if (bool == "true"){
+            bool = true;
+        }
+        if (bool == "false"){
+            bool = false;
+        }
+        var token = req.cookies.userCookie.token;
+        var info = {headers: {'Authorization':`${token}`, 'content-type': 'application/json'}};
+        var data = {completed:bool};
+        console.log("about to make PUTREQUEST");
+        axios.put("https://hunter-todo-api.herokuapp.com/todo-item/" + id, data, info)
+        .then(response => {
+           console.log(response);
+           var list = response.data;
+           res.redirect('/home');
+        })
+          .catch(error => {
+           console.log("ERROR");
+        console.error(error);
+        var list = error.data;
+        console.log("USERNAME");
+       res.redirect('/home');
+    
+        }) //end else
+
+
+
+    });
+    
+
 }); 
 
 }

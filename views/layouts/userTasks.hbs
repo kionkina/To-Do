@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <style>
 .remove{
 	background-color: rgb(236, 170, 170);
@@ -20,7 +22,44 @@
 
 </style>
 
+<script>
 
+function deleteTask(id){
+	console.log("RUNNING DELETE TASK");
+	console.log(id);
+	httpPostAsync("/delete_user_task", id);
+}
+
+function toggle(id, new_val){
+	console.log("RUNNING TOGGLE TASK");
+	console.log(id);
+	console.log(new_val);
+	httpPostAsync("/toggle_task_complete", id, new_val);
+
+}
+
+
+function httpPostAsync(theUrl, id, completed) 
+{
+	console.log(completed);
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+          location.reload();
+	}
+    xmlHttp.open("POST", theUrl, true); // true for asynchronous 
+	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	if (completed != undefined){
+		console.log("sending post request");
+		xmlHttp.send("id="+id+"&completed="+completed);
+	}
+	else {
+	
+    xmlHttp.send("id=" + id);
+	}
+}
+
+</script>
 
 </head>
 
@@ -29,21 +68,48 @@
 
 <br><br>
 Welcome {{username}}, your list looks like this: <br><br>
+
 <div id="task_container">
 {{#each list}}
 
-{{this.content}} <br>
+{{#unless this.deleted}}
 
+{{#if this.completed}}
+
+	<button onclick='toggle({{this.id}}, false)' type="button" class="btn btn-default btn-xs " style='text-decoration:line-through; display:inline-block; width:200px;'>
+	
+	{{this.content}} 
+	</button>
+	
+	
+
+{{else}}
+	<button onclick='toggle({{this.id}}, true)' type="button" class="btn btn-default btn-xs " style='text-decoration:none; display:inline-block; width:200px;'>
+	{{this.content}}
+	</button>
+	
+
+{{/if}}
+
+
+         <button type="button" class="btn btn-default btn-xs" onclick=deleteTask({{this.id}})>
+          <span class="glyphicon glyphicon-remove"></span> 
+        </button> <br>
+	</div>
+{{/unless}}
 {{/each}}
+
 </div>
 
 
 <br>
 <form id="add" action="/addTask" method="POST">
-<input id="new_task" name="new_task">   </input>
-<button type="submit"> Add Task </button>
+<div class="form-group">
+<input id="new_task" name="new_task"  class="form-control" style="width:200px; display:inline-block">   </input>
+<button type="submit" class="btn btn-default btn-sm"> Add Task </button>
+</div>
 </form>
-<Button onClick="window.location='/logout'"> Log Out </Button>
+<Button onClick="window.location='/logout'" class="btn btn-default btn-sm"> Log Out </Button>
 
 </center>
 </body>
