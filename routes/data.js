@@ -108,6 +108,10 @@ app.post('/delete_task', (req, res) => {
 });
 
 
+app.get('/', (req, res) => {
+	res.redirect("/login");
+	});
+
 app.post('/add', (req, res) => {
         var newTask = req.body.new_task.toString();
         console.log(newTask);
