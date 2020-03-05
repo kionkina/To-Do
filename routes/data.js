@@ -183,7 +183,7 @@ app.post('/addUser', (req, res) => {
         })
         .catch(error => {
              console.error(error); 
-             res.redirect("/login?msg=please+try+again");  
+             res.redirect("/login?msg=Username+is+taken.+Please+try+again.");  
         })
         
   
