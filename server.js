@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser())
-
+var port = process.env.PORT || 8080;
 // parse application/json
 app.use(bodyParser.json());
 
@@ -24,5 +24,6 @@ var fs = require('fs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.listen(8080);
+var server=app.listen(port,function() {
+	console.log("app running on port 8080"); });
 
