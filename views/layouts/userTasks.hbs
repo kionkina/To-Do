@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+ <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <style>
 .remove{
 	background-color: rgb(236, 170, 170);
@@ -64,10 +66,28 @@ function httpPostAsync(theUrl, id, completed)
 </head>
 
 <body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Jello</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+
 <center>
 
+ <img src="img/logo.png" style="width:300px;"> </img>
+
 <br><br>
-Welcome {{username}}, your list looks like this: <br><br>
+<h3>Welcome {{username}}, your list looks like this: </h3> <br><br>
 
 <div id="task_container">
 {{#each list}}
@@ -106,10 +126,10 @@ Welcome {{username}}, your list looks like this: <br><br>
 <form id="add" action="/addTask" method="POST">
 <div class="form-group">
 <input id="new_task" name="new_task"  class="form-control" style="width:200px; display:inline-block">   </input>
-<button type="submit" class="btn btn-default btn-sm"> Add Task </button>
+<button type="submit" class="btn btn-default btn-sm" style="height:32px;"> Add Task </button>
 </div>
 </form>
-<Button onClick="window.location='/logout'" class="btn btn-default btn-sm"> Log Out </Button>
+
 
 </center>
 </body>

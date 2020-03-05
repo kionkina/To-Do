@@ -33,12 +33,15 @@
 </style>
 </head>
 <body class="{{template}}">
+      <center>
+      <img src="img/logo.png" style="width:600px;"> </img>
+      </center>
   <div class="container">
     <br>
-    <div class="row">
-                <div class="col-sm ">
-                    <h3>Login</h3>
-                    <form action='/auth' method="POST">
+
+      <div class="d-flex justify-content-center">
+                    <h3>Login</h3><br>
+                    <form action='/auth' method="POST" style="margin:10px;">
                         <div class="form-group">
                             <input type="text" name="username" class="form-control" placeholder="Username" value="" />
                            
@@ -48,13 +51,10 @@
                         </div>
                        
                     </form>
-                </div>
-           <div class="col-sm"></div>  
-           <div class="col-sm">
-       <div class="col-sm"></div>
-                <div class="col-sm ">
-                    <h3>Sign Up</h3>
-                    <form action='/addUser' method='POST'>
+    
+                              
+                    <h3>Sign Up</h3> <br>
+                    <form action='/addUser' method='POST' style="margin:10px;">
                         <div class="form-group">
                             <input type="text" name="username" class="form-control" placeholder="Username" value="" />
                            
@@ -65,8 +65,9 @@
                         </div>
                        
                     </form>
-                </div> 
-                </div>    
+               
+             
+                </div>   
           </div>
 <div class="row">
 
